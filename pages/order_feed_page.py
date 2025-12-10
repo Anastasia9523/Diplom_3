@@ -24,6 +24,7 @@ class OrderFeedPage(BasePage):
         items = self.find_all(L.ORDERS_IN_PROGRESS)
         return [i.text.strip() for i in items if i.text.strip()]
     
+    @allure.step("Получить список заказов в блоке 'Готовы'")
     def get_done_orders(self):
         items = self.find_all(L.DONE_ORDERS)
         return [i.text.strip() for i in items if i.text.strip()]
