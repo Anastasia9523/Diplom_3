@@ -1,7 +1,6 @@
 import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import ActionChains
 
 from pages.base_page import BasePage
 from locators.main_page_locators import MainPageLocators as L
@@ -20,7 +19,9 @@ class MainPage(BasePage):
 
     @allure.step("Перейти в Ленту заказов")
     def go_to_feed(self):
-        self.wait.until(EC.element_to_be_clickable(L.FEED_BTN)).click()
+        self.wait_modal_closed()
+        btn = self.wait.until(EC.element_to_be_clickable(L.FEED_BTN))
+        self.js_click(btn) 
 
     @allure.step("Ожидание загрузки конструктора")
     def wait_constructor_loaded(self):
@@ -53,12 +54,11 @@ class MainPage(BasePage):
 
         self.wait.until(EC.visibility_of(source))
         self.wait.until(EC.visibility_of_element_located(L.CONSTRUCTOR_DROP_ZONE))
-        self.wait.until(EC.element_to_be_clickable(L.CONSTRUCTOR_DROP_ZONE))
 
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", source)
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", target)
+        self.scroll_into_view(source)
+        self.scroll_into_view(target)
 
-        ActionChains(self.driver).click_and_hold(source).move_to_element(target).release().perform()
+        self.drag_and_drop(source, target)
 
         self.wait.until(lambda d: self.get_ingredient_counter(index) > 0)
 
